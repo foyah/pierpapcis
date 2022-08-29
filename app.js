@@ -31,7 +31,7 @@ function getRandomChoice() {
         case 1 :
             return 'PAPIER'
         case 2 : 
-            return 'SCISSORS'
+            return 'CISEAUX'
     }
 }
 
@@ -55,9 +55,12 @@ const endgameMsg = document.getElementById('endgameMsg')
 const overlay = document.getElementById('overlay')
 const restartBtn = document.getElementById('restartBtn')
 
-rockBtn.addEventListener('click', handleClick('PIERRE'))
-paperBtn.addEventListener('click', handleClick('PAPIER'))
-scissorsBtn.addEventListener('click', handleClick('CISEAUX'))
+rockBtn.addEventListener('click', () => handleClick('PIERRE'))
+paperBtn.addEventListener('click', () => handleClick('PAPIER'))
+scissorsBtn.addEventListener('click', () => handleClick('CISEAUX'))
+restartBtn.addEventListener('click', restartGame)
+overlay.addEventListener('click', closeEndgameModal)
+
 
 function handleClick(playerSelection){
     if(isGameOver()){
@@ -106,13 +109,52 @@ function updateScore() {
         scoreInfo.textContent = 'Égalité!'
     } else if(roundWinner === 'Joueur') {
     scoreInfo.textContent = 'Tu as gagné!'
-    } else {
-    scoreInfo.textContent = 'Tu as gagné!'
+    } else if(roundWinner === 'Ordinateur') {
+    scoreInfo.textContent = 'Tu as perdu!'
     }
+    playerScorePara.textContent = `Joueur : ${playerScore}`
+    computerScorePara.textContent = `Ordinateur : ${computerScore}`
 }
 
-playerScorePara.textContent = `Joueur : ${playerScore}`
-computerScorePara.textContent = `Ordinateur : ${computerScore}`
+function updateScoreMessage(winner, playerSelection, computerSelection){
+    if(winner === 'Joueur'){
+        scoreMessage.textContent = `${capitalizeFirstLetter(playerSelection)} bat ${computerSelection.toLowerCase()}`
+        return
+    }
+    else if(winner === 'Ordinateur'){
+        scoreMessage.textContent = `${capitalizeFirstLetter(playerSelection)} est battu par ${computerSelection.toLowerCase()}`
+        return
+    } 
+    scoreMessage.textContent = `${capitalizeFirstLetter(playerSelection)} est à égalité avec ${computerSelection.toLowerCase()}`
+}
 
+function capitalizeFirstLetter(string){
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
+}
 
+function openEndgameModal() {
+    endgameModal.classList.add('active')
+    overlay.classList.add('active')
+}
 
+function closeEndgameModal() {
+    endgameModal.classList.remove('active')
+    overlay.classList.remove('active')
+}
+
+function setFinalMessage() {
+    return playerScore > computerScore ? (endGameMsg.textContent = 'Tu as gagné!') : (endGameMsg.textContent = 'Tu as perdu...')
+}
+
+function restartGame() {
+    playerScore = 0
+    computerScore = 0
+    scoreInfo.textContent = "Choisis Ton Arme"
+    scoreMessage.textContent = "Le premier qui arrive à 5 points a gagné"
+    playerScorePara.textContent = "Joueur : 0"
+    computerScorePara.textContent = "Ordinateur : 0"
+    playerSign.textContent = "❔"
+    computerSign.textContent = "❔"
+    endgameModal.classList.remove('active')
+    overlay.classList.remove('active')
+}
